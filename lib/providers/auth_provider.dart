@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import '../core/session_manager.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
@@ -80,13 +81,25 @@ class AuthProvider extends ChangeNotifier {
     });
   }
 
-  Future<bool> requestOtp(String email) => _run(() => _authService.requestPasswordRecoveryOtp(email));
+  Future<bool> requestOtp(String email) =>
+      _run(() => _authService.requestPasswordRecoveryOtp(email));
 
   Future<bool> verifyOtp({required String email, required String otp}) =>
       _run(() => _authService.verifyRecoveryOtp(email: email, otp: otp));
 
-  Future<bool> resetPassword({required String email, required String otp, required String newPassword}) =>
-      _run(() => _authService.resetPassword(email: email, otp: otp, newPassword: newPassword));
+  /// ✅ FIXED: Added confirmPassword parameter
+  Future<bool> resetPassword({
+    required String email,
+    required String otp,
+    required String newPassword,
+    required String confirmPassword, // ✅ NEW PARAMETER
+  }) =>
+      _run(() => _authService.resetPassword(
+            email: email,
+            otp: otp,
+            newPassword: newPassword,
+            confirmPassword: confirmPassword, // ✅ PASS TO SERVICE
+          ));
 
   Future<void> logout() async {
     await SessionManager.instance.clear();

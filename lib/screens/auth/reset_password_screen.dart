@@ -31,11 +31,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     final auth = context.read<AuthProvider>();
+
+    // ✅ FIXED: Pass both password and confirmPassword
     final ok = await auth.resetPassword(
       email: widget.email.trim(),
       otp: widget.otp.trim(),
       newPassword: _password.text.trim(),
+      confirmPassword: _confirm.text.trim(), // ✅ NEW: PASS CONFIRM PASSWORD
     );
+
     if (!mounted) return;
     if (ok) {
       ScaffoldMessenger.of(context).showSnackBar(

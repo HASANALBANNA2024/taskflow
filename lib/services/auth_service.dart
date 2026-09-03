@@ -27,7 +27,7 @@ class AuthService {
     );
 
     if (res['status'] != 'success') {
-      throw Exception(res['data'] ?? 'Registration failed');
+      throw ApiException(res['data']?.toString() ?? 'Registration failed');
     }
 
     return UserModel.fromJson(res['data'] as Map<String, dynamic>);
@@ -49,7 +49,7 @@ class AuthService {
     );
 
     if (res['status'] != 'success') {
-      throw Exception(res['data'] ?? 'Login failed');
+      throw ApiException(res['data']?.toString() ?? 'Login failed');
     }
 
     return res['token']?.toString() ?? '';
@@ -59,7 +59,7 @@ class AuthService {
     final res = await _api.get('/ProfileDetails');
 
     if (res['status'] != 'success') {
-      throw Exception(res['data'] ?? 'Failed to fetch profile');
+      throw ApiException(res['data']?.toString() ?? 'Failed to fetch profile');
     }
 
     final data = res['data'];
@@ -84,26 +84,30 @@ class AuthService {
         'firstName': firstName.trim(),
         'lastName': lastName.trim(),
         'mobile': mobile.trim(),
-        if (password != null && password.isNotEmpty)
+        if (password != null && password.trim().isNotEmpty)
           'password': password.trim(),
       },
     );
 
     if (res['status'] != 'success') {
-      throw Exception(res['data'] ?? 'Failed to update profile');
+      throw ApiException(res['data']?.toString() ?? 'Failed to update profile');
     }
   }
 
   /// Step 1 of forgot-password: sends an OTP to the given email.
   Future<void> requestPasswordRecoveryOtp(String email) async {
     final cleanEmail = email.trim();
+    if (cleanEmail.isEmpty) {
+      throw ApiException('ইমেইল খালি রাখা যাবে না');
+    }
+
     final res = await _api.get(
       '/RecoverVerifyEmail/$cleanEmail',
       withToken: false,
     );
 
     if (res['status'] != 'success') {
-      throw Exception(res['data'] ?? 'Failed to send OTP');
+      throw ApiException(res['data']?.toString() ?? 'Failed to send OTP');
     }
   }
 
@@ -115,34 +119,65 @@ class AuthService {
     final cleanEmail = email.trim();
     final cleanOtp = otp.trim();
 
+    if (cleanEmail.isEmpty || cleanOtp.isEmpty) {
+      throw ApiException('ইমেইল অথবা ওটিপি খালি রাখা যাবে না');
+    }
+
     final res = await _api.get(
       '/RecoverVerifyOtp/$cleanEmail/$cleanOtp',
       withToken: false,
     );
 
     if (res['status'] != 'success') {
-      throw Exception(res['data'] ?? 'Invalid OTP');
+      throw ApiException(res['data']?.toString() ?? 'Invalid OTP');
     }
   }
 
   /// Step 3: sets a new password once the OTP has been verified.
+  /// ✅ FIXED: confirmPassword নেবে কিন্তু API তে পাঠাবো না
   Future<void> resetPassword({
     required String email,
     required String otp,
     required String newPassword,
+    required String confirmPassword, // ✅ Local validation এর জন্য
   }) async {
+    final cleanEmail = email.trim();
+    final cleanOtp = otp.trim();
+    final cleanPassword = newPassword.trim();
+    final cleanConfirmPassword = confirmPassword.trim();
+
+    // ✅ সকল field validate করো
+    if (cleanEmail.isEmpty ||
+        cleanOtp.isEmpty ||
+        cleanPassword.isEmpty ||
+        cleanConfirmPassword.isEmpty) {
+      throw ApiException('সকল তথ্য সঠিকভাবে পূরণ করুন');
+    }
+
+    // ✅ দুটো password match করছে কিনা check করো
+    if (cleanPassword != cleanConfirmPassword) {
+      throw ApiException('নতুন password এবং confirm password একই নয়');
+    }
+
+    // ✅ Password strength check (minimum 4 characters)
+    if (cleanPassword.length < 4) {
+      throw ApiException('Password অন্তত ৪ টি ক্যারেক্টার এর হতে হবে');
+    }
+
+    // ✅ শুধু 3টি field পাঠাও (email, OTP, password)
     final res = await _api.post(
       '/RecoverResetPassword',
       withToken: false,
       body: {
-        'email': email.trim(),
-        'OTP': otp.trim(), // Postman অনুযায়ী ক্যাপিটাল 'OTP'
-        'password': newPassword.trim(),
+        'email': cleanEmail,
+        'OTP': cleanOtp,
+        'password': cleanPassword,
+        // ❌ confirmPassword এখানে নেই - শুধু backend এ password যাবে
       },
     );
 
     if (res['status'] != 'success') {
-      throw Exception(res['data'] ?? 'Failed to reset password');
+      throw ApiException(res['data']?.toString() ?? 'Failed to reset password');
     }
   }
 }
