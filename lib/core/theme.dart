@@ -47,7 +47,6 @@ class AppTheme {
         secondary: AppColors.amber,
         error: AppColors.brick,
         surface: AppColors.surface,
-        background: AppColors.paper,
       ),
     );
 
@@ -70,7 +69,8 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppRadius.sm),
           borderSide: const BorderSide(color: AppColors.line, width: 1.5),
@@ -87,14 +87,18 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppRadius.sm),
           borderSide: const BorderSide(color: AppColors.brick, width: 1.6),
         ),
-        labelStyle: const TextStyle(color: AppColors.inkSoft, fontWeight: FontWeight.w700, fontSize: 12.5),
+        labelStyle: const TextStyle(
+            color: AppColors.inkSoft,
+            fontWeight: FontWeight.w700,
+            fontSize: 12.5),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.moss,
           foregroundColor: Colors.white,
           minimumSize: const Size.fromHeight(52),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.sm)),
           textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
           elevation: 0,
         ),
@@ -104,15 +108,18 @@ class AppTheme {
           foregroundColor: AppColors.moss,
           side: const BorderSide(color: AppColors.moss, width: 1.6),
           minimumSize: const Size.fromHeight(52),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.sm)),
           textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.ink,
-        contentTextStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        contentTextStyle:
+            const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.sm)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.sm)),
       ),
     );
   }

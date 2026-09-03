@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/common_widgets.dart';
@@ -14,7 +15,8 @@ class OtpVerifyScreen extends StatefulWidget {
 }
 
 class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
-  final List<TextEditingController> _controllers = List.generate(6, (_) => TextEditingController());
+  final List<TextEditingController> _controllers =
+      List.generate(6, (_) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
 
   String get _otpCode => _controllers.map((c) => c.text).join();
@@ -43,7 +45,8 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
     final ok = await auth.verifyOtp(email: widget.email, otp: otp);
     if (!mounted) return;
     if (ok) {
-      Navigator.of(context).push(
+      // pushReplacement ব্যবহার করা হয়েছে যেন ব্যাক করলে আবার OTP স্ক্রিনে না আসে
+      Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (_) => ResetPasswordScreen(email: widget.email, otp: otp),
         ),
@@ -80,7 +83,8 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                   color: AppColors.mossTint,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Icon(Icons.shield_outlined, color: AppColors.moss, size: 32),
+                child: const Icon(Icons.shield_outlined,
+                    color: AppColors.moss, size: 32),
               ),
               const SizedBox(height: 20),
               const Text(
@@ -92,29 +96,37 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  style: const TextStyle(fontSize: 13.5, color: AppColors.inkFaint, height: 1.5),
+                  style: const TextStyle(
+                      fontSize: 13.5, color: AppColors.inkFaint, height: 1.5),
                   children: [
                     TextSpan(
                       text: widget.email,
-                      style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.ink),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, color: AppColors.ink),
                     ),
                     const TextSpan(text: ' — A 6-digit code has been sent'),
                   ],
                 ),
               ),
               const SizedBox(height: 28),
-              if (auth.errorMessage != null) InlineError(message: auth.errorMessage!),
+              if (auth.errorMessage != null)
+                InlineError(message: auth.errorMessage!),
+
+              // OTP Input Row (Overflow & Padding Fix)
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(6, (index) {
                   return Container(
-                    width: 46,
-                    height: 54,
+                    width: 44,
+                    height: 52,
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: AppColors.mossTint.withOpacity(0.35),
-                      borderRadius: BorderRadius.circular(14),
+                      color: AppColors.mossTint.withValues(alpha: 0.35),
+                      borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: _focusNodes[index].hasFocus ? AppColors.moss : Colors.black12,
+                        color: _focusNodes[index].hasFocus
+                            ? AppColors.moss
+                            : Colors.black12,
                         width: 1.5,
                       ),
                     ),
@@ -124,10 +136,16 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                       keyboardType: TextInputType.number,
                       textAlign: TextAlign.center,
                       maxLength: 1,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        height: 1.2,
+                      ),
                       decoration: const InputDecoration(
                         counterText: '',
                         border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero, // কেটে যাওয়া রোধ করে
+                        isDense: true,
                       ),
                       onChanged: (value) {
                         if (value.isNotEmpty && index < 5) {
@@ -144,7 +162,8 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                 }),
               ),
               const SizedBox(height: 28),
-              AppButton(label: 'Verify', onPressed: _submit, loading: auth.isLoading),
+              AppButton(
+                  label: 'Verify', onPressed: _submit, loading: auth.isLoading),
               const SizedBox(height: 20),
               GestureDetector(
                 onTap: auth.isLoading ? null : _resendCode,
@@ -155,7 +174,8 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                       TextSpan(text: "Didn't receive code? "),
                       TextSpan(
                         text: 'Resend',
-                        style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.moss),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: AppColors.moss),
                       ),
                     ],
                   ),

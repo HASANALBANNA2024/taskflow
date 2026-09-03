@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../core/theme.dart';
 import '../providers/auth_provider.dart';
 import 'auth/login_screen.dart';
@@ -26,7 +27,9 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (_) => auth.status == AuthStatus.authenticated ? const MainNavScreen() : const LoginScreen(),
+        builder: (_) => auth.status == AuthStatus.authenticated
+            ? const MainNavScreen()
+            : const LoginScreen(),
       ),
     );
   }
@@ -41,16 +44,25 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 72, height: 72,
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(22)),
-              child: const Icon(Icons.task_rounded, color: AppColors.moss, size: 34),
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(22)),
+              child: const Icon(Icons.task_rounded,
+                  color: AppColors.moss, size: 34),
             ),
             const SizedBox(height: 16),
             const Text('TaskFlow',
-                style: TextStyle(color: Colors.white, fontSize: 19, fontWeight: FontWeight.w800)),
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 19,
+                    fontWeight: FontWeight.w800)),
             const SizedBox(height: 4),
             Text('Stay on top of your day',
-                style: TextStyle(color: Colors.white.withOpacity(0.75), fontSize: 12.5, fontWeight: FontWeight.w600)),
+                style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.75),
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600)),
           ],
         ),
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/common_widgets.dart';
@@ -8,7 +9,8 @@ import 'login_screen.dart';
 class ResetPasswordScreen extends StatefulWidget {
   final String email;
   final String otp;
-  const ResetPasswordScreen({super.key, required this.email, required this.otp});
+  const ResetPasswordScreen(
+      {super.key, required this.email, required this.otp});
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -29,15 +31,22 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     final auth = context.read<AuthProvider>();
-    final ok = await auth.resetPassword(email: widget.email, otp: widget.otp, newPassword: _password.text);
+    final ok = await auth.resetPassword(
+      email: widget.email.trim(),
+      otp: widget.otp.trim(),
+      newPassword: _password.text.trim(),
+    );
     if (!mounted) return;
     if (ok) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password reset. Please log in with your new password.')),
+        const SnackBar(
+          content: Text(
+              'Password reset successfully. Please log in with your new password.'),
+        ),
       );
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const LoginScreen()),
-            (route) => false,
+        (route) => false,
       );
     }
   }
@@ -63,7 +72,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       color: AppColors.mossTint,
                       borderRadius: BorderRadius.circular(18),
                     ),
-                    child: const Icon(Icons.password_outlined, color: AppColors.moss, size: 26),
+                    child: const Icon(Icons.password_outlined,
+                        color: AppColors.moss, size: 26),
                   ),
                   const SizedBox(height: 18),
                   const Text(
@@ -75,24 +85,33 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   const Text(
                     'Choose a strong password you have not used before.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12.5, color: AppColors.inkFaint, height: 1.5),
+                    style: TextStyle(
+                        fontSize: 12.5, color: AppColors.inkFaint, height: 1.5),
                   ),
                   const SizedBox(height: 24),
-                  if (auth.errorMessage != null) InlineError(message: auth.errorMessage!),
+                  if (auth.errorMessage != null)
+                    InlineError(message: auth.errorMessage!),
                   AppTextField(
                     label: 'New password',
                     controller: _password,
                     obscure: true,
-                    validator: (v) => (v == null || v.length < 4) ? 'At least 4 characters' : null,
+                    validator: (v) => (v == null || v.trim().length < 4)
+                        ? 'At least 4 characters'
+                        : null,
                   ),
                   AppTextField(
                     label: 'Confirm password',
                     controller: _confirm,
                     obscure: true,
-                    validator: (v) => v != _password.text ? 'Passwords do not match' : null,
+                    validator: (v) => v?.trim() != _password.text.trim()
+                        ? 'Passwords do not match'
+                        : null,
                   ),
                   const SizedBox(height: 6),
-                  AppButton(label: 'Reset password', onPressed: _submit, loading: auth.isLoading),
+                  AppButton(
+                      label: 'Reset password',
+                      onPressed: _submit,
+                      loading: auth.isLoading),
                 ],
               ),
             ),

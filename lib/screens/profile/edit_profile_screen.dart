@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/common_widgets.dart';
@@ -17,7 +18,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late final _lastName = TextEditingController(text: _user?.lastName ?? '');
   late final _mobile = TextEditingController(text: _user?.mobile ?? '');
   late final _email = TextEditingController(text: _user?.email ?? '');
-  final _password = TextEditingController();
 
   get _user => context.read<AuthProvider>().currentUser;
 
@@ -28,11 +28,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       firstName: _firstName.text.trim(),
       lastName: _lastName.text.trim(),
       mobile: _mobile.text.trim(),
-      password: _password.text.isNotEmpty ? _password.text : null,
     );
     if (!mounted) return;
     if (ok) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated.')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Profile updated.')));
       Navigator.of(context).pop();
     }
   }
@@ -53,22 +53,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               children: [
                 Center(
                   child: Container(
-                    width: 64, height: 64,
+                    width: 64,
+                    height: 64,
                     margin: const EdgeInsets.only(bottom: 22),
-                    decoration: BoxDecoration(color: AppColors.mossTint, borderRadius: BorderRadius.circular(20)),
+                    decoration: BoxDecoration(
+                        color: AppColors.mossTint,
+                        borderRadius: BorderRadius.circular(20)),
                     alignment: Alignment.center,
                     child: Text(user?.initials ?? '?',
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.mossDeep)),
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.mossDeep)),
                   ),
                 ),
-                if (auth.errorMessage != null) InlineError(message: auth.errorMessage!),
+                if (auth.errorMessage != null)
+                  InlineError(message: auth.errorMessage!),
                 Row(
                   children: [
                     Expanded(
                       child: AppTextField(
                         label: 'First name',
                         controller: _firstName,
-                        validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                        validator: (v) =>
+                            (v == null || v.isEmpty) ? 'Required' : null,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -76,7 +84,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: AppTextField(
                         label: 'Last name',
                         controller: _lastName,
-                        validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                        validator: (v) =>
+                            (v == null || v.isEmpty) ? 'Required' : null,
                       ),
                     ),
                   ],
@@ -90,16 +99,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   label: 'Mobile number',
                   controller: _mobile,
                   keyboardType: TextInputType.phone,
-                  validator: (v) => (v == null || v.length < 6) ? 'Enter a valid number' : null,
-                ),
-                AppTextField(
-                  label: 'New password (optional)',
-                  controller: _password,
-                  obscure: true,
-                  hint: 'Leave blank to keep current password',
+                  validator: (v) => (v == null || v.length < 6)
+                      ? 'Enter a valid number'
+                      : null,
                 ),
                 const SizedBox(height: 6),
-                AppButton(label: 'Save changes', onPressed: _submit, loading: auth.isLoading),
+                AppButton(
+                    label: 'Save changes',
+                    onPressed: _submit,
+                    loading: auth.isLoading),
               ],
             ),
           ),

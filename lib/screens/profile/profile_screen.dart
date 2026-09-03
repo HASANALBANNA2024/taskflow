@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/task_provider.dart';
@@ -29,18 +30,33 @@ class ProfileScreen extends StatelessWidget {
             child: Column(
               children: [
                 Container(
-                  width: 64, height: 64,
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20)),
                   alignment: Alignment.center,
                   child: Text(user?.initials ?? '?',
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.moss)),
+                      style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.moss)),
                 ),
                 const SizedBox(height: 10),
-                Text(user?.fullName.trim().isNotEmpty == true ? user!.fullName : 'Your name',
-                    style: const TextStyle(color: Colors.white, fontSize: 15.5, fontWeight: FontWeight.w800)),
+                Text(
+                    user?.fullName.trim().isNotEmpty == true
+                        ? user!.fullName
+                        : 'Your name',
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w800)),
                 const SizedBox(height: 2),
                 Text(user?.email ?? '',
-                    style: TextStyle(color: Colors.white.withOpacity(0.75), fontSize: 11, fontWeight: FontWeight.w600)),
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.75),
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600)),
               ],
             ),
           ),
@@ -53,7 +69,12 @@ class ProfileScreen extends StatelessWidget {
                 color: AppColors.surface,
                 borderRadius: BorderRadius.circular(AppRadius.md),
                 border: Border.all(color: AppColors.line),
-                boxShadow: const [BoxShadow(color: Color(0x1A000000), blurRadius: 20, offset: Offset(0, 12))],
+                boxShadow: const [
+                  BoxShadow(
+                      color: Color(0x1A000000),
+                      blurRadius: 20,
+                      offset: Offset(0, 12))
+                ],
               ),
               child: Row(
                 children: [
@@ -73,10 +94,24 @@ class ProfileScreen extends StatelessWidget {
                 _menuRow(
                   icon: Icons.person_outline,
                   label: 'Edit profile',
-                  onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EditProfileScreen())),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => const EditProfileScreen())),
                 ),
-                _menuRow(icon: Icons.lock_outline, label: 'Change password', onTap: () {}),
-                _menuRow(icon: Icons.notifications_none, label: 'Notifications', onTap: () {}),
+                _menuRow(
+                  icon: Icons.lock_outline,
+                  label: 'Change password',
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text(
+                              'Use forgot password option to reset/change password.')),
+                    );
+                  },
+                ),
+                _menuRow(
+                    icon: Icons.notifications_none,
+                    label: 'Notifications',
+                    onTap: () {}),
                 _menuRow(
                   icon: Icons.logout,
                   label: 'Log out',
@@ -94,16 +129,26 @@ class ProfileScreen extends StatelessWidget {
   Widget _stat(String n, String l) => Expanded(
         child: Column(
           children: [
-            Text(n, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+            Text(n,
+                style:
+                    const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
             const SizedBox(height: 2),
-            Text(l, style: const TextStyle(fontSize: 9.5, color: AppColors.inkFaint, fontWeight: FontWeight.w700)),
+            Text(l,
+                style: const TextStyle(
+                    fontSize: 9.5,
+                    color: AppColors.inkFaint,
+                    fontWeight: FontWeight.w700)),
           ],
         ),
       );
 
   Widget _divider() => Container(width: 1, height: 30, color: AppColors.line);
 
-  Widget _menuRow({required IconData icon, required String label, required VoidCallback onTap, bool danger = false}) {
+  Widget _menuRow(
+      {required IconData icon,
+      required String label,
+      required VoidCallback onTap,
+      bool danger = false}) {
     final color = danger ? AppColors.brick : AppColors.ink;
     return InkWell(
       onTap: onTap,
@@ -111,11 +156,14 @@ class ProfileScreen extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.only(bottom: 9),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(border: Border.all(color: AppColors.line), borderRadius: BorderRadius.circular(AppRadius.md)),
+        decoration: BoxDecoration(
+            border: Border.all(color: AppColors.line),
+            borderRadius: BorderRadius.circular(AppRadius.md)),
         child: Row(
           children: [
             Container(
-              width: 34, height: 34,
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
                 color: danger ? AppColors.brickTint : AppColors.chipNeutral,
                 borderRadius: BorderRadius.circular(10),
@@ -123,8 +171,14 @@ class ProfileScreen extends StatelessWidget {
               child: Icon(icon, size: 17, color: color),
             ),
             const SizedBox(width: 12),
-            Expanded(child: Text(label, style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: color))),
-            const Icon(Icons.chevron_right, size: 18, color: AppColors.inkFaint),
+            Expanded(
+                child: Text(label,
+                    style: TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
+                        color: color))),
+            const Icon(Icons.chevron_right,
+                size: 18, color: AppColors.inkFaint),
           ],
         ),
       ),
@@ -135,11 +189,14 @@ class ProfileScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppRadius.lg)),
-        title: const Text('Log out?', style: TextStyle(fontWeight: FontWeight.w800)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadius.lg)),
+        title: const Text('Log out?',
+            style: TextStyle(fontWeight: FontWeight.w800)),
         content: const Text("You'll need to log in again to see your tasks."),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           TextButton(
             onPressed: () async {
               Navigator.pop(ctx);
@@ -151,7 +208,9 @@ class ProfileScreen extends StatelessWidget {
                 );
               }
             },
-            child: const Text('Log out', style: TextStyle(color: AppColors.brick, fontWeight: FontWeight.w800)),
+            child: const Text('Log out',
+                style: TextStyle(
+                    color: AppColors.brick, fontWeight: FontWeight.w800)),
           ),
         ],
       ),
